@@ -1,0 +1,37 @@
+<html>
+
+    <head>
+    </head>
+
+    <body>
+        <title>Tree for the index {{ tree.index_name }} on table {{ tree.table_name }} ({{ tree.columns }})</title>
+
+        <!-- Render Metapage -->
+        {% with metapage = tree.metapage %}
+            <div id="metapage">
+                <label>Metapage</label>
+                <ul class="metapage-fields">
+                    <li>Version: {{ metapage.version }}</li>
+                    <li>Root blkno: {{ metapage.root }}</li>
+                    <li>Level: {{ metapage.level }}</li>
+                    <li>Fast Root blkno: {{ metapage.fast_root }}</li>
+                    <li>Fast Level: {{ metapage.fast_level }}</li>
+                </ul>
+            </div>
+        {% endwith %}
+        {% with root = tree.root %}
+        <div class="root level">
+            {% with page=root %}
+                {% include 'render_page.html' %}
+            {% endwith %}
+        </div>
+        {% endwith %}
+
+        {% if not tree.root.is_leaf %}
+            {% with pages=child_level_pages(tree.root) %}
+                {% include 'render_level.html' %}
+            {% endwith %}
+        {% endif %}
+    </body>
+
+</html>

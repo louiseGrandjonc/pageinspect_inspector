@@ -1,0 +1,7 @@
+.env3/*
+inspector/.env3/*
+.DS_Store
+.coverage
+*.pyc
+*.*~
+pageinspect_inspector.egg-info/*

@@ -1,0 +1,21 @@
+<div class="page" id="page-{{ page.id }}" data--next="page-{{ page.right_sibling_id }}" data--prev="page-{{ page.left_sibling_id }}">
+    <label>
+        Page block number: {{ page.id }}
+        Page level: {{ page.level }}
+        Page high key: {{ page.high_key }}
+    </label>
+
+    <div class="items">
+        {% for item in page.items %}
+            <div class="item" {% if item.child %}data--child="page-{{ item.child.id }}"{% endif %}>
+                <ul class="item-content">
+                    <li>Value: {{ item.value }}</li>
+                    {% if page.is_leaf %}
+                        <li>Pointer: {{ item.pointer }}</li>
+                        <li>Object Primary Key: {{ item.obj_id }}</li>
+                    {% endif %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+</div>
