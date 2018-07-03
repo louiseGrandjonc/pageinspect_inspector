@@ -6,8 +6,8 @@
     {% endfor %}
 </div>
 
-<!-- {% if not pages[0].is_leaf %} -->
-<!--     {% with pages=child_level_pages(pages) %} -->
-<!--         {% include 'render_level.html' %} -->
-<!--     {% endwith %} -->
-<!-- {% endif %} -->
+{% if not pages[0].is_leaf %}
+    {% with pages=child_level_pages(pages) %}
+        {% include 'render_level.html' %}
+    {% endwith %}
+{% endif %}
