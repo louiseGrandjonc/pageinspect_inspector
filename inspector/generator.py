@@ -52,9 +52,9 @@ def retrieve_items(connection, page, index_name, table_name, columns, primary_ke
     # if leaf, update items_data
     for item in items_data:
         if page.is_leaf:
-            row_id, value = rows[item[1]]
-            values_dict[item[5]] = value
-            items.append(Item(value, pointer=item[1], obj_id=row_id))
+            row_id, value = rows.get(item[1], (None, None))
+            values_dict[item[5]] = value or item[5]
+            items.append(Item(value or item[5], pointer=item[1], obj_id=row_id))
 
         else:
             next_page_pointer = int(item[1][1:-1].split(',')[0])

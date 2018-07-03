@@ -12,7 +12,11 @@
                     <li>Value: {{ item.value }}</li>
                     {% if page.is_leaf %}
                         <li>Pointer: {{ item.pointer }}</li>
-                        <li>Object Primary Key: {{ item.obj_id }}</li>
+                        {% if item.obj_id %}
+                            <li>Object Primary Key: {{ item.obj_id }}</li>
+                        {% else %}
+                            <li>Row deleted, still in page until vacuum</li>
+                        {% endif %}
                     {% endif %}
                 </ul>
             </div>

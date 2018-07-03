@@ -25,6 +25,5 @@ env.globals['child_level_pages'] = child_level_pages
 def render_tree(tree, path):
     template = env.get_template('render_tree.html')
 
-    file_path = os.path.join(path, '%s.html' % tree.index_name)
-    with open(file_path, 'w') as html_file:
+    with open(path, 'w') as html_file:
         html_file.write(template.render(tree=tree))
