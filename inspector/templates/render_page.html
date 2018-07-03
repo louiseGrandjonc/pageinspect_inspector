@@ -1,21 +1,33 @@
-<div class="page" id="page-{{ page.id }}" data--next="page-{{ page.right_sibling_id }}" data--prev="page-{{ page.left_sibling_id }}">
-    <label>
-        Page block number: {{ page.id }}
-        Page level: {{ page.level }}
-        Page high key: {{ page.high_key }}
-    </label>
+<div class="page" id="page-{{ page.id }}" data--next="page-{{ page.next_page_id }}" data--prev="page-{{ page.prev_page_id }}" {% if not page.is_root %}style="display: none;"{% endif %}>
 
-    <div class="items">
+    <div class="page-head">
+        {% if page.is_root %}
+            <label class="title">Root</label>
+        {% elif page.is_leaf %}
+            <label class="title">Leaf</label>
+        {% else %}
+            <label class="title">Page</label>
+        {% endif %}
+
+        <ul class="page-data">
+            <li><label>Page block number: </label>{{ page.id }}</li>
+            <li><label>Page level: </label>{{ page.level }}</li>
+            <li><label>Page high key: </label>{{ page.high_key }}</li>
+        </ul>
+    </div>
+
+    <div class="items" style="display: none;">
+        <label class="title">Items</label>
         {% for item in page.items %}
             <div class="item" {% if item.child %}data--child="page-{{ item.child.id }}"{% endif %}>
                 <ul class="item-content">
-                    <li>Value: {{ item.value }}</li>
+                    <li><label>Value: </label>{{ item.value }}</li>
                     {% if page.is_leaf %}
-                        <li>Pointer: {{ item.pointer }}</li>
+                        <li><label>Pointer: </label>{{ item.pointer }}</li>
                         {% if item.obj_id %}
-                            <li>Object Primary Key: {{ item.obj_id }}</li>
+                            <li><label>Object Primary Key: </label>{{ item.obj_id }}</li>
                         {% else %}
-                            <li>Row deleted, still in page until vacuum</li>
+                            <li><label>Row deleted: </label> still in page until vacuum</li>
                         {% endif %}
                     {% endif %}
                 </ul>

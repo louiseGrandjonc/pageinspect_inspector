@@ -1,37 +1,139 @@
 <html>
 
     <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <script>
+         $(document).ready(function(){
+             $('#loading').hide();
+             $('#tree').show();
+             $(".page-head").click(function(e) {
+                 e.preventDefault();
+                 $(this).parent().find('.items').toggle();
+             });
+
+             $(".item, .item-content").click(function(e) {
+                 e.preventDefault();
+                 console.log('test');
+                 var next_page_id = '#' + $(this).data("Child");
+                 console.log(next_page_id);
+                 $(next_page_id).toggle();
+             });
+         });
+        </script>
+
+        <style>
+         body {
+             color: #313131;
+         }
+
+         h1 {
+             width: 60%;
+             margin: 0 auto;
+             font-size: 16px;
+             margin-top: 30px;
+         }
+
+         #tree {
+             margin-top: 100px;
+             overflow-x: scroll;
+             white-space: nowrap;
+         }
+
+         .title {
+             display: inline-block;
+             width: 100%;
+             text-align: center;
+             padding: 10px 0px 10px 0px;
+             border-color: inherit;
+             border-bottom-style: solid;
+         }
+
+         label {
+             font-weight: bold;
+         }
+
+         .level {
+             display: inline-block;
+             margin-right: 100px;
+             vertical-align: top;
+         }
+
+         #metapage {
+             width: 250px;
+             background-color: #e6ccb3;
+             border-width: 2px;
+             border-style: solid;
+             border-color: #d9b18c;
+         }
+
+         .page {
+             background-color: #cceeff;
+             border-width: 2px;
+             border-style: solid;
+             border-color: #99ddff;
+             width: 300px;
+             margin-bottom: 50px;
+         }
+
+         .page-head {
+             border-color: inherit;
+         }
+
+         .items {
+             border-width: 2px 2px 0px 2px;
+             border-color: #b3ffb3;
+             border-style: solid;
+             background-color: #e6ffe6;
+         }
+
+         .item {
+             border-bottom: 2px solid #b3ffb3;
+         }
+
+        </style>
     </head>
 
     <body>
-        <title>Tree for the index {{ tree.index_name }} on table {{ tree.table_name }} ({{ tree.columns }})</title>
+        <title>Tree for the index {{ tree.index_name }} on table {{ tree.index_table }} ({{ ', '.join(tree.columns) }})</title>
 
-        <!-- Render Metapage -->
-        {% with metapage = tree.metapage %}
-            <div id="metapage">
-                <label>Metapage</label>
-                <ul class="metapage-fields">
-                    <li>Version: {{ metapage.version }}</li>
-                    <li>Root blkno: {{ metapage.root }}</li>
-                    <li>Level: {{ metapage.level }}</li>
-                    <li>Fast Root blkno: {{ metapage.fast_root }}</li>
-                    <li>Fast Level: {{ metapage.fast_level }}</li>
-                </ul>
-            </div>
-        {% endwith %}
-        {% with root = tree.root %}
-        <div class="root level">
-            {% with page=root %}
-                {% include 'render_page.html' %}
-            {% endwith %}
+        <h1>Tree for the index {{ tree.index_name }} on table {{ tree.index_table }} ({{ ', '.join(tree.columns) }})</h1>
+
+        <div id="loading">
+            Loading ...
         </div>
-        {% endwith %}
 
-        {% if not tree.root.is_leaf %}
-            {% with pages=child_level_pages(tree.root) %}
-                {% include 'render_level.html' %}
+        <div id="tree" style="display:none;">
+            <!-- Render Metapage -->
+            {% with metapage = tree.metapage %}
+                <div class="metapage level">
+                    <div id="metapage">
+                        <label class="title">Metapage</label>
+                        <ul class="metapage-fields">
+                            <li><label>Version: </label>{{ metapage.version }}</li>
+                            <li><label>Root block number: </label>{{ metapage.root }}</li>
+                            <li><label>Level: </label>{{ metapage.level }}</li>
+                            <li><label>Fast Root block number: </label>{{ metapage.fast_root }}</li>
+                            <li><label>Fast Level: </label>{{ metapage.fast_level }}</li>
+                        </ul>
+                    </div>
+                </div>
             {% endwith %}
-        {% endif %}
+
+            {% with root = tree.root %}
+                <div class="root level">
+                    {% with page=root %}
+                        {% include 'render_page.html' %}
+                    {% endwith %}
+                </div>
+            {% endwith %}
+
+            {% if not tree.root.is_leaf %}
+                {% with pages=child_level_pages(tree.root) %}
+                    {% include 'render_level.html' %}
+                {% endwith %}
+            {% endif %}
+        </div>
     </body>
 
 </html>
