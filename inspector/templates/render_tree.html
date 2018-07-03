@@ -7,18 +7,120 @@
          $(document).ready(function(){
              $('#loading').hide();
              $('#tree').show();
+
              $(".page-head").click(function(e) {
                  e.preventDefault();
                  $(this).parent().find('.items').toggle();
+
+                 var level = $(this).parents('.level').first();
+                 draw_linked_list(level);
+                 draw_children_lines(level);
+                 draw_children_lines(level.next());
              });
 
              $(".item, .item-content").click(function(e) {
                  e.preventDefault();
-                 console.log('test');
                  var next_page_id = '#' + $(this).data("Child");
-                 console.log(next_page_id);
                  $(next_page_id).toggle();
+
+                 var level = $(this).parents('.level').first();
+                 draw_linked_list(level.next());
+                 draw_children_lines(level);
+                 draw_children_lines(level.next());
              });
+
+
+             function hide_items(element) {
+                 element.parent().find(".item").each(function() {
+                     var next_page_id = '#' + $(this).data("Child");
+                      $(next_page_id).hide();
+                 });
+             }
+
+             function show_items(element) {
+                 element.parent().find(".item").each(function() {
+                     var next_page_id = '#' + $(this).data("Child");
+                      $(next_page_id).show();
+                 });
+             }
+
+             $(".items label").click(function(e) {
+                 e.preventDefault();
+                 if ($(this).hasClass('shown')) {
+                     hide_items($(this));
+                     $(this).removeClass('shown');
+                 } else {
+                     show_items($(this));
+                     $(this).addClass('shown');
+                 }
+
+                 var level = $(this).parents('.level').first();
+                 draw_linked_list(level.next());
+                 draw_children_lines(level);
+                 draw_children_lines(level.next());
+             });
+
+
+             function createLine(x1,y1, x2,y2, element, lineClass) {
+                 var length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+                 var angle  = Math.atan2(y1 - y2, x1 - x2) * 180 / Math.PI;
+                 var transform = 'rotate('+angle+'deg)';
+
+                 var line = $('<div>').appendTo(element)
+                                      .addClass(lineClass)
+                                      .css({
+                                          'position': 'absolute',
+                                          'transform': transform
+                                      })
+                                      .width(length)
+                                      .offset({left: x1, top: y1});
+
+                 return line;
+             }
+
+             function draw_linked_list(level) {
+                 // delete lines from level
+                 level.find('.linked--line').remove();
+
+                 level.find('.page:visible').each(function() {
+                     if ($(this).data('Next') != undefined) {
+                         var next_page_id = '#' + $(this).data("Next") + ':visible',
+                             next_page = $(next_page_id);
+
+                         if (next_page.length > 0) {
+                             var x1 = $(this).position().left + 150,
+                                 y1 = $(this).position().top + $(this).height(),
+                                 x2 = x1,
+                                 y2 = next_page.position().top;
+
+                             createLine(x1, y1, x2, y2, level, 'linked--line');
+                         }
+                     }
+                 });
+             }
+
+
+             function draw_children_lines(level) {
+                 level.find('.line').remove();
+                 level.find('.parent .items:visible').each(function() {
+                     $(this).find('.item').each(function() {
+                         if ($(this).data('Child') != undefined) {
+                             var next_page_id = '#' + $(this).data("Child") + ':visible',
+                                 next_page = $(next_page_id);
+
+                             if (next_page.length > 0) {
+                                 var x1 = $(this).position().left + 300,
+                                     y1 = $(this).position().top,
+                                     x2 = next_page.position().left,
+                                     y2 = next_page.position().top;
+
+                                 createLine(x1, y1, x2, y2, level, 'line');
+                             }
+                         }
+                     });
+                 });
+             }
+
          });
         </script>
 
@@ -59,12 +161,24 @@
              vertical-align: top;
          }
 
+         .linked--line{
+             transform-origin: 0 100%;
+             height: 2px;
+             background: #313131;
+         }
+
+         .line{
+             transform-origin: 0 100%;
+             height: 2px;
+             background: #313131;
+         }
+
          #metapage {
              width: 250px;
-             background-color: #e6ccb3;
+             background-color: #fff2e6;
              border-width: 2px;
              border-style: solid;
-             border-color: #d9b18c;
+             border-color: #ffd9b3;
          }
 
          .page {
