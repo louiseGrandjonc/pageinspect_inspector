@@ -8,6 +8,16 @@
              $('#loading').hide();
              $('#tree').show();
 
+             function draw_metapage_link() {
+                 $('.line--meta').remove();
+                 var metapage_pos = $('#metapage').position(),
+                     root_pos = $('.level.root').position();
+
+                 create_line(metapage_pos.left + 250, metapage_pos.top + 25, root_pos.left, root_pos.top + 25, $('#metapage'), 'line--meta')
+             }
+
+             draw_metapage_link();
+
              $(".page-head").click(function(e) {
                  e.preventDefault();
                  $(this).parent().find('.items').toggle();
@@ -16,6 +26,7 @@
                  draw_linked_list(level);
                  draw_children_lines(level);
                  draw_children_lines(level.next());
+                 draw_children_lines(level.prev());
              });
 
              $(".item, .item-content").click(function(e) {
@@ -26,6 +37,7 @@
                  var level = $(this).parents('.level').first();
                  draw_linked_list(level.next());
                  draw_children_lines(level);
+                 draw_children_lines(level.prev());
                  draw_children_lines(level.next());
              });
 
@@ -57,15 +69,21 @@
                  var level = $(this).parents('.level').first();
                  draw_linked_list(level.next());
                  draw_children_lines(level);
+                 draw_children_lines(level.prev());
                  draw_children_lines(level.next());
              });
 
 
-             function createLine(x1,y1, x2,y2, element, lineClass) {
+             function create_line(x1,y1, x2,y2, element, lineClass) {
                  var length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
                  var angle  = Math.atan2(y1 - y2, x1 - x2) * 180 / Math.PI;
                  var transform = 'rotate('+angle+'deg)';
 
+                 var offset_left = x1;
+                 if (x2 < x1) {
+                     offset_left = x2;
+                 }
+                 var offset_top = y1;
                  var line = $('<div>').appendTo(element)
                                       .addClass(lineClass)
                                       .css({
@@ -73,7 +91,7 @@
                                           'transform': transform
                                       })
                                       .width(length)
-                                      .offset({left: x1, top: y1});
+                                      .offset({left: offset_left, top: offset_top});
 
                  return line;
              }
@@ -93,7 +111,7 @@
                                  x2 = x1,
                                  y2 = next_page.position().top;
 
-                             createLine(x1, y1, x2, y2, level, 'linked--line');
+                             create_line(x1, y1, x2, y2, level, 'linked--line');
                          }
                      }
                  });
@@ -102,6 +120,7 @@
 
              function draw_children_lines(level) {
                  level.find('.line').remove();
+
                  level.find('.parent .items:visible').each(function() {
                      $(this).find('.item').each(function() {
                          if ($(this).data('Child') != undefined) {
@@ -114,12 +133,33 @@
                                      x2 = next_page.position().left,
                                      y2 = next_page.position().top;
 
-                                 createLine(x1, y1, x2, y2, level, 'line');
+                                 if (y2 < y1) {
+                                     create_line(x2, y2, x1, y1, level, 'line');
+                                 } else {
+                                     create_line(x1, y1, x2, y2, level, 'line');
+                                 }
                              }
                          }
                      });
                  });
              }
+
+
+             $('#tree').scroll(function() {
+                 $('.line').remove();
+                 $('.linked--line').remove();
+                 $('.line--meta').remove();
+
+                 draw_metapage_link();
+                 clearTimeout($.data(this, 'scrollTimer'));
+                 $.data(this, 'scrollTimer', setTimeout(function() {
+                     // do something
+                     $('.level').each(function() {
+                         draw_linked_list($(this));
+                         draw_children_lines($(this));
+                     });
+                 }, 250));
+             });
 
          });
         </script>
@@ -157,17 +197,15 @@
 
          .level {
              display: inline-block;
-             margin-right: 100px;
+             margin-right: 400px;
              vertical-align: top;
          }
 
-         .linked--line{
-             transform-origin: 0 100%;
-             height: 2px;
-             background: #313131;
+         .level.metapage {
+             margin-right: 100px;
          }
 
-         .line{
+         .line, .line--meta, .linked--line{
              transform-origin: 0 100%;
              height: 2px;
              background: #313131;

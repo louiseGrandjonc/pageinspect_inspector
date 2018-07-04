@@ -21,7 +21,7 @@
         {% for item in page.items %}
             <div class="item" {% if item.child %}data--child="page-{{ item.child.id }}"{% endif %}>
                 <ul class="item-content">
-                    <li><label>Value: </label>{{ item.value }}</li>
+                    <li><label>Value: </label>{% if item.value %}{{ item.value }}{% else %}&lt;begin&gt;{% endif %}</li>
                     {% if page.is_leaf %}
                         <li><label>Pointer: </label>{{ item.pointer }}</li>
                         {% if item.obj_id %}
