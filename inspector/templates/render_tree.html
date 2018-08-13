@@ -27,6 +27,7 @@
                  draw_linked_list(level.next());
                  draw_children_lines(level);
                  draw_children_lines(level.next());
+
              });
 
 
@@ -58,6 +59,7 @@
                  draw_linked_list(level.next());
                  draw_children_lines(level);
                  draw_children_lines(level.next());
+
              });
 
 
@@ -218,21 +220,23 @@
         </div>
 
         <div id="tree" style="display:none;">
-            <!-- Render Metapage -->
-            {% with metapage = tree.metapage %}
-                <div class="metapage level">
-                    <div id="metapage">
-                        <label class="title">Metapage</label>
-                        <ul class="metapage-fields">
-                            <li><label>Version: </label>{{ metapage.version }}</li>
-                            <li><label>Root block number: </label>{{ metapage.root }}</li>
-                            <li><label>Level: </label>{{ metapage.level }}</li>
-                            <li><label>Fast Root block number: </label>{{ metapage.fast_root }}</li>
-                            <li><label>Fast Level: </label>{{ metapage.fast_level }}</li>
-                        </ul>
-                    </div>
-                </div>
-            {% endwith %}
+          <!-- Render Metapage -->
+          {% if tree.metapage %}
+          {% with metapage = tree.metapage %}
+          <div class="metapage level">
+            <div id="metapage">
+              <label class="title">Metapage</label>
+              <ul class="metapage-fields">
+                <li><label>Version: </label>{{ metapage.version }}</li>
+                <li><label>Root block number: </label>{{ metapage.root }}</li>
+                <li><label>Level: </label>{{ metapage.level }}</li>
+                <li><label>Fast Root block number: </label>{{ metapage.fast_root }}</li>
+                <li><label>Fast Level: </label>{{ metapage.fast_level }}</li>
+              </ul>
+            </div>
+          </div>
+          {% endwith %}
+          {% endif %}
 
             {% with root = tree.root %}
                 <div class="root level">

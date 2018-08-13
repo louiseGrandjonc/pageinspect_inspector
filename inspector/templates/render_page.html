@@ -12,7 +12,9 @@
         <ul class="page-data">
             <li><label>Page block number: </label>{{ page.id }}</li>
             <li><label>Page level: </label>{{ page.level }}</li>
+            {% if tree.index_type == 'btree' %}
             <li><label>Page high key: </label>{{ page.high_key }}</li>
+            {% endif %}
         </ul>
     </div>
 
@@ -21,8 +23,16 @@
         {% for item in page.items %}
             <div class="item" {% if item.child %}data--child="page-{{ item.child.id }}"{% endif %}>
                 <ul class="item-content">
-                    <li><label>Value: </label>{{ item.value }}</li>
-                    {% if page.is_leaf %}
+                  <li><label>Value: </label>
+                    {% if var is iterable and var is not string %}
+                    [{% for val in item.value %}
+                    <span style="width:100px; word-wrap:break-word; display:inline-block;"> {{ val }}</span></br>
+                    {% endfor %}]
+                    {% else %}
+                    {{ val }}
+                    {% endif %}
+                  </li>
+                    {% if page.is_leaf and tree.index_type == 'btree' %}
                         <li><label>Pointer: </label>{{ item.pointer }}</li>
                         {% if item.obj_id %}
                             <li><label>Row Primary Key: </label>{{ item.obj_id }}</li>

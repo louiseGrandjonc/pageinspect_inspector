@@ -7,7 +7,9 @@ class Metapage(object):
         self.fast_level = fast_level
 
 class Page(object):
-    def __init__(self, pk, level,is_leaf=False, is_root=False, items=None, prev_page_id=None, next_page_id=None, high_key=None, prev_item=None):
+    def __init__(self, pk, level, is_leaf=False, is_root=False,
+                 items=None, prev_page_id=None, next_page_id=None,
+                 high_key=None, prev_item=None, nb_items=None):
         self.id = pk
         self.is_leaf = is_leaf
         self.is_root = is_root
@@ -17,6 +19,7 @@ class Page(object):
         self.next_page_id = next_page_id
         self.high_key = high_key
         self.prev_item = prev_item
+        self.nb_items = nb_items
 
 class Item(object):
     def __init__(self, value, page=None, pointer=None, obj_id=None):
@@ -26,9 +29,10 @@ class Item(object):
         self.obj_id = obj_id
 
 class Tree(object):
-    def __init__(self, metapage, root, index_name, table_name, columns):
+    def __init__(self, root, index_name, table_name, columns, metapage=None, index_type=None):
         self.metapage = metapage
         self.root = root
-        self.index_name=index_name
-        self.columns=columns
-        self.index_table=table_name
+        self.index_name = index_name
+        self.columns = columns
+        self.index_table = table_name
+        self.index_type = type
