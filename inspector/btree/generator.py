@@ -65,6 +65,8 @@ def retrieve_items(connection, page, index_name, table_name, columns, primary_ke
             value = None
             if item[5]:
                 value = values_dict.get(item[5], item[5])
+            else:
+                value = ""
             items.append(Item(value, page=child, pointer=item[1]))
 
     prev_item = None
