@@ -55,6 +55,10 @@ def retrieve_items(connection, page, index_name, table_name, columns, primary_ke
     # if leaf, update items_data
     for item in items_data:
         if page.is_leaf:
+            # this is a bug.
+            # if this leaf page is not the rightmost page
+            # so the first item is page higt key. 
+            # but the ctid of item contained page higt key is not the ctid of row of table
             row_id, value = rows.get(item[1], (None, None))
             values_dict[item[5]] = value or item[5]
             items.append(Item(value or item[5], pointer=item[1], obj_id=row_id))
