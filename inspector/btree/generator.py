@@ -55,6 +55,10 @@ def retrieve_items(connection, page, index_name, table_name, columns, primary_ke
     # if leaf, update items_data
     for item in items_data:
         if page.is_leaf:
+            # this is a bug.
+            # if this leaf page is not the rightmost page
+            # so the first item is page higt key. 
+            # but the ctid of item contained page higt key is not the ctid of row of table
             row_id, value = rows.get(item[1], (None, None))
             values_dict[item[5]] = value or item[5]
             items.append(Item(value or item[5], pointer=item[1], obj_id=row_id))
@@ -65,6 +69,8 @@ def retrieve_items(connection, page, index_name, table_name, columns, primary_ke
             value = None
             if item[5]:
                 value = values_dict.get(item[5], item[5])
+            else:
+                value = ""
             items.append(Item(value, page=child, pointer=item[1]))
 
     prev_item = None
@@ -72,10 +78,10 @@ def retrieve_items(connection, page, index_name, table_name, columns, primary_ke
 
     # the first two items of each page are pointers to the next page first item (high key), and to the previous page last item
     if page.next_page_id:
-        next_item = items.pop(0)
+        next_item = items[0]
     if page.prev_page_id or (not page.prev_page_id
                              and not page.is_leaf
                              and not page.is_root):
-        prev_item = items.pop(0)
+        prev_item = items[0]
 
     return items, prev_item, next_item, values_dict

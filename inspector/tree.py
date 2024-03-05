@@ -35,4 +35,4 @@ class Tree(object):
         self.index_name = index_name
         self.columns = columns
         self.index_table = table_name
-        self.index_type = type
+        self.index_type = index_type
