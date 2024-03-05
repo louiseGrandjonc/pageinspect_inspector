@@ -74,10 +74,10 @@ def retrieve_items(connection, page, index_name, table_name, columns, primary_ke
 
     # the first two items of each page are pointers to the next page first item (high key), and to the previous page last item
     if page.next_page_id:
-        next_item = items.pop(0)
+        next_item = items[0]
     if page.prev_page_id or (not page.prev_page_id
                              and not page.is_leaf
                              and not page.is_root):
-        prev_item = items.pop(0)
+        prev_item = items[0]
 
     return items, prev_item, next_item, values_dict
